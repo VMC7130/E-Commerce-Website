@@ -51,23 +51,33 @@ app.delete("/product/:id", async (req, resp) => {
     resp.send(result);
 });
 
-app.get("/product/:id", async (req, resp)=>{
-    let result = await Product.findOne({_id: req.params.id});
-    if(result){
+app.get("/product/:id", async (req, resp) => {
+    let result = await Product.findOne({ _id: req.params.id });
+    if (result) {
         resp.send(result)
     }
-    else{
-        resp.send({result: "No result found"})
+    else {
+        resp.send({ result: "No result found" })
     }
 })
 
-app.put("/product/:id", async (req, resp)=>{
+app.put("/product/:id", async (req, resp) => {
     let result = await Product.updateOne(
-        {_id: req.params.id},
+        { _id: req.params.id },
         {
-            $set : req.body
+            $set: req.body
         }
     )
+    resp.send(result)
+})
+
+app.get("/search/:key", async (req, resp) => {
+    let result = await Product.find({
+        "$or": [
+            { name: { $regex: req.params.key } },
+            { company: { $regex: req.params.key } }
+        ]
+    });
     resp.send(result)
 })
 
